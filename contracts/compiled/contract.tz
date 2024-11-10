@@ -1,0 +1,69 @@
+{ parameter
+    (or (pair %logEvidence (string %description) (bytes %hash))
+        (pair %addIncident
+           (string %description)
+           (list %timeline string)
+           (list %affectedSystems string)
+           (list %anomalyAlerts string)
+           (list %evidenceChain string))) ;
+  storage
+    (pair (big_map %incidents
+             int
+             (pair (int %id)
+                   (string %description)
+                   (list %timeline string)
+                   (list %affectedSystems string)
+                   (list %anomalyAlerts string)
+                   (list %evidenceChain string)))
+          (big_map %evidences int (pair (int %id) (string %description) (bytes %hash)))
+          (int %incidentCounter)
+          (int %evidenceCounter)) ;
+  code { UNPAIR ;
+         IF_LEFT
+           { PUSH int 1 ;
+             DUP 3 ;
+             GET 6 ;
+             ADD ;
+             DUP 3 ;
+             DIG 3 ;
+             GET 3 ;
+             DUP 4 ;
+             CDR ;
+             DIG 4 ;
+             CAR ;
+             DUP 5 ;
+             PAIR 3 ;
+             SOME ;
+             DUP 4 ;
+             UPDATE ;
+             UPDATE 3 ;
+             SWAP ;
+             UPDATE 6 }
+           { PUSH int 1 ;
+             DUP 3 ;
+             GET 5 ;
+             ADD ;
+             DUP 3 ;
+             DIG 3 ;
+             CAR ;
+             DUP 4 ;
+             GET 8 ;
+             DUP 5 ;
+             GET 7 ;
+             DUP 6 ;
+             GET 5 ;
+             DUP 7 ;
+             GET 3 ;
+             DIG 7 ;
+             CAR ;
+             DUP 8 ;
+             PAIR 6 ;
+             SOME ;
+             DUP 4 ;
+             UPDATE ;
+             UPDATE 1 ;
+             SWAP ;
+             UPDATE 5 } ;
+         NIL operation ;
+         PAIR } }
+

@@ -1,0 +1,6 @@
+{
+  "dependencies": {
+    "@taquito/signer": "^20.1.0",
+    "@taquito/taquito": "^20.1.0"
+  }
+}

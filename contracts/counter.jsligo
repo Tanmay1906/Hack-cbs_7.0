@@ -1,0 +1,70 @@
+namespace Counter {
+    type incident = {
+        id: int;
+        description: string;
+        timeline: list<string>;
+        affectedSystems: list<string>;
+        anomalyAlerts: list<string>;
+        evidenceChain: list<string>
+    };
+
+    type evidence = {
+        id: int;
+        description: string;
+        hash: bytes
+    };
+
+    type storage = {
+        incidents: big_map<int, incident>;
+        evidences: big_map<int, evidence>;
+        incidentCounter: int;
+        evidenceCounter: int
+    };
+
+    type addIncidentParam = {
+        description: string;
+        timeline: list<string>;
+        affectedSystems: list<string>;
+        anomalyAlerts: list<string>;
+        evidenceChain: list<string>
+    };
+
+    type logEvidenceParam = {
+        description: string;
+        hash: bytes
+    };
+
+    type verifyEvidenceParam = {
+        evidenceId: int;
+        hash: bytes
+    };
+
+    type returnValue = [list<operation>, storage];
+
+    @entry
+    const addIncident = (params : addIncidentParam, store : storage) : returnValue => {
+        const newIncidentId = store.incidentCounter + 1;
+        const newIncident = {
+            id: newIncidentId,
+            description: params.description,
+            timeline: params.timeline,
+            affectedSystems: params.affectedSystems,
+            anomalyAlerts: params.anomalyAlerts,
+            evidenceChain: params.evidenceChain
+        };
+        const updatedIncidents = Big_map.update(newIncidentId, Some(newIncident), store.incidents);
+        return [list([]), {...store, incidents: updatedIncidents, incidentCounter: newIncidentId}];
+    };
+
+    @entry
+    const logEvidence = (params : logEvidenceParam, store : storage) : returnValue => {
+        const newEvidenceId = store.evidenceCounter + 1;
+        const newEvidence = {
+            id: newEvidenceId,
+            description: params.description,
+            hash: params.hash
+        };
+        const updatedEvidences = Big_map.update(newEvidenceId, Some(newEvidence), store.evidences);
+        return [list([]), {...store, evidences: updatedEvidences, evidenceCounter: newEvidenceId}];
+    };
+}
